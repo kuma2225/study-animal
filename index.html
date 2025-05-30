@@ -8,7 +8,7 @@
         font-family: sans-serif;
         text-align: center;
         padding: 20px;
-        background-color: #f9f9f9;
+        background-color: white; /* 背景を白に */
       }
 
       #timerScreen,
@@ -56,6 +56,12 @@
       #timerScreen .pet-image-wrapper {
         margin: 20px auto;
       }
+
+      /* ごほうび画像のスタイル */
+      #rewardImage {
+        width: 100px;
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
@@ -101,6 +107,8 @@
     <div id="endScreen">
       <h2>おつかれさま！</h2>
       <p id="rewardMessage"></p>
+      <img id="rewardImage" src="" alt="ごほうび" />
+      <br />
       <button onclick="goToStart()">ありがとう！</button>
     </div>
 
@@ -110,24 +118,33 @@
       let selectedPetIndex = 0;
 
       const pets = [
-        { id: "inu", name: "いぬ", img: "inu.png", reward: "ホネをくれたよ！" },
+        {
+          id: "inu",
+          name: "いぬ",
+          img: "inu.png",
+          reward: "ホネをくれたよ！",
+          rewardImg: "hone.png",
+        },
         {
           id: "pand",
           name: "パンダ",
           img: "pand.png",
           reward: "ささをくれたよ！",
+          rewardImg: "sasa.png",
         },
         {
           id: "ham",
           name: "ハムスター",
           img: "ham.png",
           reward: "ひまわりのたねをくれたよ！",
+          rewardImg: "tane.png",
         },
         {
           id: "pen",
           name: "ペンギン",
           img: "pen.png",
           reward: "さかなをくれたよ！",
+          rewardImg: "sakana.png",
         },
       ];
 
@@ -188,6 +205,7 @@
         document.getElementById(
           "rewardMessage"
         ).textContent = `おともが ${pet.reward}`;
+        document.getElementById("rewardImage").src = pet.rewardImg;
       }
 
       function goToStart() {
