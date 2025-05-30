@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>study animal</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+
+      #timerScreen,
+      #endScreen {
+        display: none;
+      }
+
+      .pet-image-wrapper {
+        width: 200px;
+        height: 260px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 5px;
+        background-color: transparent;
+      }
+
+      .pet-image-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      .selector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        margin: 10px;
+      }
+
+      button {
+        font-size: 1.2em;
+        padding: 8px 16px;
+      }
+
+      input[type="number"] {
+        font-size: 1.2em;
+        padding: 5px;
+        width: 60px;
+        text-align: center;
+      }
+
+      /* タイマー画面の画像中央揃え */
+      #timerScreen .pet-image-wrapper {
+        margin: 20px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- スタート画面 -->
+    <div id="startScreen">
+      <h1>勉強をはじめよう！</h1>
+
+      <p>おともをえらんでね</p>
+      <div class="selector">
+        <button onclick="prevPet()">←</button>
+        <div class="pet-image-wrapper">
+          <img id="petSelectImage" src="inu.png" alt="おとも" />
+        </div>
+        <button onclick="nextPet()">→</button>
+      </div>
+      <p id="petName">いぬ</p>
+
+      <p>
+        何分勉強する？
+        <input
+          type="number"
+          id="studyMinutesInput"
+          value="1"
+          min="1"
+          step="1"
+        />
+        分
+      </p>
+
+      <button onclick="startStudy()">スタート！</button>
+    </div>
+
+    <!-- タイマー画面 -->
+    <div id="timerScreen">
+      <h2>がんばろう！</h2>
+      <div class="pet-image-wrapper">
+        <img id="petImage" src="" alt="おとも" />
+      </div>
+      <h3 id="timeLeft">--:--</h3>
+    </div>
+
+    <!-- 終了画面 -->
+    <div id="endScreen">
+      <h2>おつかれさま！</h2>
+      <p id="rewardMessage"></p>
+      <button onclick="goToStart()">ありがとう！</button>
+    </div>
+
+    <script>
+      let timer;
+      let endTime;
+      let selectedPetIndex = 0;
+
+      const pets = [
+        { id: "inu", name: "いぬ", img: "inu.png", reward: "ホネをくれたよ！" },
+        {
+          id: "pand",
+          name: "パンダ",
+          img: "pand.png",
+          reward: "ささをくれたよ！",
+        },
+        {
+          id: "ham",
+          name: "ハムスター",
+          img: "ham.png",
+          reward: "ひまわりのたねをくれたよ！",
+        },
+        {
+          id: "pen",
+          name: "ペンギン",
+          img: "pen.png",
+          reward: "さかなをくれたよ！",
+        },
+      ];
+
+      function updatePetSelector() {
+        const pet = pets[selectedPetIndex];
+        document.getElementById("petSelectImage").src = pet.img;
+        document.getElementById("petName").textContent = pet.name;
+      }
+
+      function prevPet() {
+        selectedPetIndex = (selectedPetIndex - 1 + pets.length) % pets.length;
+        updatePetSelector();
+      }
+
+      function nextPet() {
+        selectedPetIndex = (selectedPetIndex + 1) % pets.length;
+        updatePetSelector();
+      }
+
+      function startStudy() {
+        const input = document.getElementById("studyMinutesInput").value;
+        const minutes = parseInt(input, 10);
+        if (isNaN(minutes) || minutes < 1) {
+          alert("1分以上の数字を入力してね！");
+          return;
+        }
+
+        const pet = pets[selectedPetIndex];
+        endTime = Date.now() + minutes * 60 * 1000;
+
+        document.getElementById("startScreen").style.display = "none";
+        document.getElementById("timerScreen").style.display = "block";
+
+        document.getElementById("petImage").src = pet.img;
+        updateTimer();
+        timer = setInterval(updateTimer, 1000);
+      }
+
+      function updateTimer() {
+        const remaining = endTime - Date.now();
+        if (remaining <= 0) {
+          clearInterval(timer);
+          showEndScreen();
+        } else {
+          const mins = Math.floor(remaining / 60000);
+          const secs = Math.floor((remaining % 60000) / 1000);
+          document.getElementById("timeLeft").textContent = `${String(
+            mins
+          ).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        }
+      }
+
+      function showEndScreen() {
+        document.getElementById("timerScreen").style.display = "none";
+        document.getElementById("endScreen").style.display = "block";
+
+        const pet = pets[selectedPetIndex];
+        document.getElementById(
+          "rewardMessage"
+        ).textContent = `おともが ${pet.reward}`;
+      }
+
+      function goToStart() {
+        document.getElementById("endScreen").style.display = "none";
+        document.getElementById("startScreen").style.display = "block";
+      }
+
+      // 初期表示
+      updatePetSelector();
+    </script>
+  </body>
+</html>
